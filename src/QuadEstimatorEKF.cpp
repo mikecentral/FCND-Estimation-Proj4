@@ -177,7 +177,7 @@ VectorXf QuadEstimatorEKF::PredictState(VectorXf curState, float dt, V3F accel, 
   
   predictedState(3) += globalAccel.x*dt;  // predict x_dot
   predictedState(4) += globalAccel.y*dt;  // predict y_dot
-  predictedState(5) += globalAccel.z*dt;  // predict z_dot
+  predictedState(5) += (globalAccel.z-9.806f)*dt;  // predict z_dot
   predictedState(0) += predictedState(3)*dt;  // predict x
   predictedState(1) += predictedState(4)*dt;  // predict y
   predictedState(2) += predictedState(5)*dt;  // predict z
