@@ -175,12 +175,14 @@ VectorXf QuadEstimatorEKF::PredictState(VectorXf curState, float dt, V3F accel, 
 
   V3F globalAccel = attitude.Rotate_BtoI(accel);
   
+  predictedState(0) += curState(3)*dt;  // predict x
+  predictedState(1) += curState(4)*dt;  // predict y
+  predictedState(2) += curState(5)*dt;  // predict z
+
   predictedState(3) += globalAccel.x*dt;  // predict x_dot
   predictedState(4) += globalAccel.y*dt;  // predict y_dot
-  predictedState(5) += (globalAccel.z-9.806f)*dt;  // predict z_dot
-  predictedState(0) += predictedState(3)*dt;  // predict x
-  predictedState(1) += predictedState(4)*dt;  // predict y
-  predictedState(2) += predictedState(5)*dt;  // predict z
+  predictedState(5) += (globalAccel.z-CONST_GRAVITY)*dt;  // predict z_dot
+
 
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
@@ -295,6 +297,21 @@ void QuadEstimatorEKF::UpdateFromGPS(V3F pos, V3F vel)
   //  - this is a very simple update
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
+  hPrime(0, 0) = 1;
+  hPrime(1, 1) = 1;
+  hPrime(2, 2) = 1;
+  hPrime(3, 3) = 1;
+  hPrime(4, 4) = 1;
+  hPrime(5, 5) = 1;
+
+  zFromX(0) = ekfState(0);
+  zFromX(1) = ekfState(1);
+  zFromX(2) = ekfState(2);
+  zFromX(3) = ekfState(3);
+  zFromX(4) = ekfState(4);
+  zFromX(5) = ekfState(5);
+
+
   /////////////////////////////// END STUDENT CODE ////////////////////////////
 
   Update(z, hPrime, R_GPS, zFromX);
@@ -317,11 +334,13 @@ void QuadEstimatorEKF::UpdateFromMag(float magYaw)
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
   zFromX(0) = ekfState(6);
-  float diff = magYaw - ekfState(6);
-  if (diff > F_PI) {
+
+  float diffYaw = magYaw - ekfState(6);
+
+  if (diffYaw > F_PI) {
 	  zFromX(0) += 2.f*F_PI;
   }
-  else if (diff < -F_PI) {
+  else if (diffYaw < -F_PI) {
 	  zFromX(0) -= 2.f*F_PI;
   }
 
