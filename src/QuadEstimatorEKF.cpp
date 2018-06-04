@@ -263,13 +263,13 @@ void QuadEstimatorEKF::Predict(float dt, V3F accel, V3F gyro)
 
   ////////////////////////////// BEGIN STUDENT CODE ///////////////////////////
 
-  gPrime(3, 0) = dt;
-  gPrime(4, 1) = dt;
-  gPrime(5, 2) = dt;
+  gPrime(0, 3) = dt;
+  gPrime(1, 4) = dt;
+  gPrime(2, 5) = dt;
 
-  gPrime(6, 3) = ( RbgPrime(0, 0)*accel.x + RbgPrime(0, 1)*accel.y + RbgPrime(0, 2)*accel.z) * dt;
-  gPrime(6, 4) = ( RbgPrime(1, 0)*accel.x + RbgPrime(1, 1)*accel.y + RbgPrime(1, 2)*accel.z) * dt;
-  gPrime(6, 5) = ( RbgPrime(2, 0)*accel.x + RbgPrime(2, 1)*accel.y + RbgPrime(2, 2)*accel.z) * dt;
+  gPrime(3, 6) = ( RbgPrime(0, 0)*accel.x + RbgPrime(0, 1)*accel.y + RbgPrime(0, 2)*accel.z) * dt;
+  gPrime(4, 6) = ( RbgPrime(1, 0)*accel.x + RbgPrime(1, 1)*accel.y + RbgPrime(1, 2)*accel.z) * dt;
+  gPrime(5, 6) = ( RbgPrime(2, 0)*accel.x + RbgPrime(2, 1)*accel.y + RbgPrime(2, 2)*accel.z) * dt;
 
   ekfCov = gPrime * ekfCov * gPrime.transpose() + Q;
 
